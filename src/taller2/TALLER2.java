@@ -1,17 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package taller2;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class TALLER2 extends JFrame {
-    private Container panelContenidos;
-    private JFrame ventana;
+public class TALLER2 extends JFrame implements MouseListener{
+    private static Container panelContenidos;
+    private static JFrame ventana;
+    private  static logicaJuego logica;
+    private static JLabel[][] cubos;
+    private int Nivel;
     @Override
     public void paint(Graphics g){
         super.paint(g);
@@ -20,18 +19,26 @@ public class TALLER2 extends JFrame {
     
     
     public static void main(String[] args) {
+       
+        logica = new logicaJuego(); 
+        
+
        new TALLER2().metodoPrincipal();
     }
     
     public void metodoPrincipal(){
         ventana=new JFrame();
         ventana.setTitle(" KUKU KUBE ");
+        int dimension=logicaJuego.getDimension();
+
         panelContenidos=ventana.getContentPane();
+
         
         inicializacion();
     }
     
     public void inicializacion(){
+        
         ActionListener manipuladorEventos=new ActionListener()  { 
                 @Override
                 public void actionPerformed(ActionEvent evento)  { 
@@ -45,6 +52,7 @@ public class TALLER2 extends JFrame {
         };
         
         JPanel panelBotones = new JPanel();
+        panelBotones.setBackground(Color.BLACK);
         panelBotones.setLayout(new FlowLayout());
         
         JButton nuevaPartida = new JButton("NUEVA PARTIDA");
@@ -79,34 +87,56 @@ public class TALLER2 extends JFrame {
         salirMenu.addActionListener(manipuladorEventos);
         menu.add(salirMenu);
         barraMenu.add(menu);
+        panelSuperior.add(barraMenu, BorderLayout.NORTH);
         
         JPanel panelinformacion = new JPanel();
         panelinformacion.setBackground(Color.BLACK);
         panelinformacion.setLayout(new GridLayout(2,2) );
         
         JPanel panelinformativo1 =new JPanel();
-        JLabel nivelesPartida = new JLabel();        
-        JLabel valNivelesPartida = new JLabel();
+        panelinformativo1.setLayout(new FlowLayout());
+        JLabel nivelesPartida = new JLabel("NIVELES PARTIDA");        
+        JLabel valNivelesPartida = new JLabel(String p );
+        panelinformativo1.add(nivelesPartida);
+        panelinfomativo1.add(valNivelesPartida);
+
         
         JPanel panelinformativo2 =new JPanel();
-        JLabel nivelesRestantes = new JLabel();
-        JLabel valNivelesRestantes = new JLabel();
+        panelinformativo2.setLayout(new FlowLayout());
+        JLabel nivelesRestantes = new JLabel("NIVELES RESTANTES");
+        JLabel valNivelesRestantes = new JLabel(String v);
+        panelinformativo2.add(nivelesRestantes);
+        panelinfomativo2.add(valNivelesRestantes);
         
         JPanel panelinformativo3 =new JPanel();
-        JLabel nivelActual = new JLabel();
-        JLabel valNivelesActual = new JLabel();
+        panelinformativo3.setLayout(new FlowLayout());
+        JLabel nivelActual = new JLabel("NIVEL ACTUAL");
+        JLabel valNivelActual = new JLabel(String a) ;
+        panelinformativo3.add(nivelActual);
+        panelinfomativo3.add(valNivelActual);
         
         JPanel panelinformativo4 =new JPanel();
-        JLabel puntuacion = new JLabel();
-        JLabel valPuntuacion = new JLabel();
+        panelinformativo4.setLayout(new FlowLayout());
+        JLabel puntuacion = new JLabel("PUNTUACIÓN");
+        JLabel valPuntuacion = new JLabel(String b);
+        panelinformativo4.add(puntuacion);
+        panelinfomativo4.add(valPuntuacion);
+
+        panelinformativo.add(panelinformativo1,BorderLayout.EAST);
+        panelinformativo.add(panelinformativo2);
+        panelinformativo.add(panelinformativo3);
+        panelinformativo.add(panelinformativo4);
+
+        panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
         
         
         JPanel panelVisualizacion = new JPanel();
+        panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);
         panelVisualizacion.setLayout(new CardLayout());        
         panelContenidos.add(panelVisualizacion,BorderLayout.CENTER);
         
-        JPanel panelJuego = new JPanel();
-                
+        JPanel panelJuego = new JPanel((new GridLayout(Dimension, Dimension)));
+
        
         JPanel panelStandby = new JPanel();
         JLabel EtiquetaImagen=new JLabel();
@@ -118,5 +148,46 @@ public class TALLER2 extends JFrame {
         JSplitPane separador3 = new JSplitPane();
 
         ventana.setSize(1000, 800);
+        ventana.setLocationRelativeTo(null);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+        ventana.setVisible(true);
+    
+    private static JLabel[][] constructUi()
+    {   
+        int dimensionActual = logica.getDimension();
+
+        JLabel[][] cubes = new JLabel[dimensionActual][dimensionActual];
+
+        panelJuego.setLayout(new GridLayout(dimensionActual,dimensionActual));
+        
+        logica.assignNewCubeColors();
+        
+        populateGameBoard(cubes);
+    
+        logica.shuffleTargetCubeCoordinates();
+        
+        getTargetCube(cubes).setBackground(manager.getVariantColor());
+
+        SwingUtilities.updateComponentTreeUI(frame);
+
+        printTargetCubeCoordinates(cubes);
+
+        return cubes;
     }
+    private static void updateBoard() {
+        clearBoard(cubes);
+    }
+
+            private static void llenarTablero(JLabel[][] cubes) {
+                int dimensionActual = logica.getDimension();
+                for(int i = 0; i < dimensionActual; i++) {
+                    for(int j = 0;j < dimensionActual; j++) {
+                        cubes[i][j] = new JLabel(i + "," + j);
+                        cubes[i][j].addMouseListener(app);
+                        cubes[i][j].setBackground(manager.getNormalColor());
+                        panelJuego.add(cubes[i][j]);
+                    }
+                }
+            }
 }
+
