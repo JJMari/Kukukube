@@ -70,9 +70,15 @@ public class TALLER2 extends JFrame {
         
         JMenuBar barraMenu = new JMenuBar();
         barraMenu.setBackground(Color.LIGHT_GRAY);
+
         JMenu menu = new JMenu();
-        JMenuItem nuevaPartidaMenu= new JMenuItem();
-        JMenuItem salirMenu= new JMenuItem();
+        JMenuItem nuevaPartidaMenu= new JMenuItem("NUEVA PARTIDA");
+        nuevaPartidaMenu.addActionListener(manipuladorEventos);
+        menu.add(nuevaPartidaMenu); 
+        JMenuItem salirMenu= new JMenuItem("SALIR");
+        salirMenu.addActionListener(manipuladorEventos);
+        menu.add(salirMenu);
+        barraMenu.add(menu);
         
         JPanel panelinformacion = new JPanel();
         panelinformacion.setBackground(Color.BLACK);
@@ -99,7 +105,8 @@ public class TALLER2 extends JFrame {
         panelVisualizacion.setLayout(new CardLayout());        
         panelContenidos.add(panelVisualizacion,BorderLayout.CENTER);
         
-        JPanel panelJuego = new JPanel();        
+        JPanel panelJuego = new JPanel();
+                
        
         JPanel panelStandby = new JPanel();
         JLabel EtiquetaImagen=new JLabel();
@@ -110,6 +117,6 @@ public class TALLER2 extends JFrame {
         JSplitPane separador2 = new JSplitPane();
         JSplitPane separador3 = new JSplitPane();
 
-        
+        ventana.setSize(1000, 800);
     }
 }
