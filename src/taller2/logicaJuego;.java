@@ -3,20 +3,20 @@ package taller2;
 import java.util.Random;
 import java.awt.Color;
 
-public class logicaJuego{
+public final class logicaJuego{
 
     public static final int MAX_SIZE = 11; 
     public static final int COMPONENTES_COLOR = 3;
-    public static final int VALORES_RGB = 255;
-    private static final int SMOOTH_LVL=35;
+    public static final int VALORES_RGB = 256;
+    private static final int SMOOTH_LVL=30;
 
     private static int Dimension;
-    private int[] apuntarCubo;
-    private Random r;
+    private final int[] apuntarCubo;
+    private final Random r;
     
     private Color normalColor;
     private Color variantColor;
-    private int smoothAmount;    
+    private final int smoothAmount;    
 
     public logicaJuego() {
         r = new Random();
@@ -33,13 +33,13 @@ public class logicaJuego{
         {        
             actualRgb[i] = r.nextInt(VALORES_RGB);
             if(actualRgb[i] <= 50) {
-                actualRgb[i] += r.nextInt(220);
+                actualRgb[i] += r.nextInt(200);
             }     
             cambioRgb[i] = actualRgb[i] - smoothAmount;
         }
         
         normalColor = new Color(actualRgb[0], actualRgb[1], actualRgb[2]);
-        variantColor = new Color(changedRgb[0], changedRgb[1], changedRgb[2]);
+        variantColor = new Color(cambioRgb[0], cambioRgb[1], cambioRgb[2]);
     }
     public Color getNormalColor() {
         return normalColor;
@@ -56,13 +56,11 @@ public class logicaJuego{
     public static int getDimension() {
         return Dimension;
     }
-
-    public void nextLVL() {
-            Dimension++;        
-    }
     public void mezclarPosicionCubo() {
         apuntarCubo[0] = r.nextInt(Dimension);
         apuntarCubo[1] = r.nextInt(Dimension);
     }
-
+    public void actualizarTamanio(){
+        Dimension++;
+    }
 }

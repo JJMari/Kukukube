@@ -1,4 +1,3 @@
-
 package taller2;
 
 import java.awt.*;
@@ -6,11 +5,14 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class TALLER2 extends JFrame implements MouseListener{
-    private static Container panelContenidos;
+    private static Container panelContenidos ;
     private static JFrame ventana;
-    private  static logicaJuego logica;
-    private static JLabel[][] cubos;
-    private int Nivel;
+    private static logicaJuego logica;
+    private static JButton[][] cubos;
+    private  JPanel panelJuego;
+    private  JPanel panelStandby;
+    private TALLER2 app;
+    private int Nivel=10;
     @Override
     public void paint(Graphics g){
         super.paint(g);
@@ -19,22 +21,22 @@ public class TALLER2 extends JFrame implements MouseListener{
     
     
     public static void main(String[] args) {
-       
-        logica = new logicaJuego(); 
-        
-
+       logica = new logicaJuego();
        new TALLER2().metodoPrincipal();
+       
     }
     
     public void metodoPrincipal(){
-        ventana=new JFrame();
-        ventana.setTitle(" KUKU KUBE ");
-        int dimension=logicaJuego.getDimension();
+        app= new TALLER2();
+        ventana=new JFrame();        
+        cubos = constructUi();
+        ventana.setTitle(" KUKU KUBE ");        
 
         panelContenidos=ventana.getContentPane();
+        panelContenidos.setBackground(Color.BLACK);
 
         
-        inicializacion();
+        inicializacion();        
     }
     
     public void inicializacion(){
@@ -43,8 +45,10 @@ public class TALLER2 extends JFrame implements MouseListener{
                 @Override
                 public void actionPerformed(ActionEvent evento)  { 
                         switch (evento.getActionCommand()) {
-                            case "NUEVA PARTIDA": 
-                           
+                            
+                            case "NUEVA PARTIDA":panelStandby.setVisible(false);
+                                                 panelJuego.setVisible(true);       
+                                                 break;
                             case "SALIR"        ://Salir de la aplicación
                                                  System.exit(0);
                         }      
@@ -79,7 +83,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         JMenuBar barraMenu = new JMenuBar();
         barraMenu.setBackground(Color.LIGHT_GRAY);
 
-        JMenu menu = new JMenu();
+        JMenu menu = new JMenu("MENÚ");
         JMenuItem nuevaPartidaMenu= new JMenuItem("NUEVA PARTIDA");
         nuevaPartidaMenu.addActionListener(manipuladorEventos);
         menu.add(nuevaPartidaMenu); 
@@ -96,98 +100,168 @@ public class TALLER2 extends JFrame implements MouseListener{
         JPanel panelinformativo1 =new JPanel();
         panelinformativo1.setLayout(new FlowLayout());
         JLabel nivelesPartida = new JLabel("NIVELES PARTIDA");        
-        JLabel valNivelesPartida = new JLabel(String p );
+        JLabel valNivelesPartida = new JLabel("000");
+        valNivelesPartida.setForeground(Color.RED);
         panelinformativo1.add(nivelesPartida);
-        panelinfomativo1.add(valNivelesPartida);
+        panelinformativo1.add(valNivelesPartida);
 
         
         JPanel panelinformativo2 =new JPanel();
         panelinformativo2.setLayout(new FlowLayout());
         JLabel nivelesRestantes = new JLabel("NIVELES RESTANTES");
-        JLabel valNivelesRestantes = new JLabel(String v);
+        JLabel valNivelesRestantes = new JLabel("000");
+        valNivelesRestantes.setForeground(Color.RED);
         panelinformativo2.add(nivelesRestantes);
-        panelinfomativo2.add(valNivelesRestantes);
+        panelinformativo2.add(valNivelesRestantes);
         
         JPanel panelinformativo3 =new JPanel();
         panelinformativo3.setLayout(new FlowLayout());
         JLabel nivelActual = new JLabel("NIVEL ACTUAL");
-        JLabel valNivelActual = new JLabel(String a) ;
+        JLabel valNivelActual = new JLabel("000") ;
+        valNivelActual.setForeground(Color.RED);
         panelinformativo3.add(nivelActual);
-        panelinfomativo3.add(valNivelActual);
+        panelinformativo3.add(valNivelActual);
         
         JPanel panelinformativo4 =new JPanel();
         panelinformativo4.setLayout(new FlowLayout());
         JLabel puntuacion = new JLabel("PUNTUACIÓN");
-        JLabel valPuntuacion = new JLabel(String b);
+        JLabel valPuntuacion = new JLabel("000");
+        valPuntuacion.setForeground(Color.RED);
         panelinformativo4.add(puntuacion);
-        panelinfomativo4.add(valPuntuacion);
+        panelinformativo4.add(valPuntuacion);
 
-        panelinformativo.add(panelinformativo1,BorderLayout.EAST);
-        panelinformativo.add(panelinformativo2);
-        panelinformativo.add(panelinformativo3);
-        panelinformativo.add(panelinformativo4);
+        panelinformacion.add(panelinformativo1);
+        panelinformacion.add(panelinformativo2);
+        panelinformacion.add(panelinformativo3);
+        panelinformacion.add(panelinformativo4);
 
         panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
         
         
         JPanel panelVisualizacion = new JPanel();
-        panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);
-        panelVisualizacion.setLayout(new CardLayout());        
-        panelContenidos.add(panelVisualizacion,BorderLayout.CENTER);
+        panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);        
         
-        JPanel panelJuego = new JPanel((new GridLayout(Dimension, Dimension)));
-
+        int dimensionActual=logicaJuego.getDimension();
+        panelJuego = new JPanel((new GridLayout(dimensionActual,dimensionActual)));
+        panelJuego.setSize(panelVisualizacion.getWidth(), panelVisualizacion.getHeight());
+        cubos= constructUi();
+        panelVisualizacion.add(panelJuego);
+        panelJuego.setVisible(false);
        
-        JPanel panelStandby = new JPanel();
+        panelStandby = new JPanel();
         JLabel EtiquetaImagen=new JLabel();
         EtiquetaImagen.setIcon(new ImageIcon("uib.gif"));
-        panelVisualizacion.add(panelStandby,"STANDBY");
+        panelStandby.add(EtiquetaImagen);
+        panelVisualizacion.add(panelStandby);
+        panelStandby.setVisible(true);
         
         JSplitPane separador1 = new JSplitPane();
         JSplitPane separador2 = new JSplitPane();
         JSplitPane separador3 = new JSplitPane();
-
+        
+        
         ventana.setSize(1000, 800);
         ventana.setLocationRelativeTo(null);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         ventana.setVisible(true);
+         
+
+    }
+//     private void vaciarTablero(JButton[][] cubos) {
+//        int dimensionActual = logicaJuego.getDimension();
+//            for(int i = 0; i < dimensionActual; i++) {
+//                for(int j = 0; j < dimensionActual; j++) {   
+//                    this.remove(cubos[i][j]);
+//                    cubos[i][j] = null;                              
+//                }
+//            }   
+//    }
+    private void llenarTablero(JButton[][] cubos) {
+        int dimensionActual = logicaJuego.getDimension();
+        for(int i = 0; i < dimensionActual; i++) {
+            for(int j = 0;j < dimensionActual; j++) {
+                cubos[i][j] = new JButton(i + "," + j);
+                cubos[i][j].addMouseListener(app);
+                cubos[i][j].setBackground(logica.getNormalColor());
+                panelJuego.add(cubos[i][j]);
+            }
+        }
+    }
+        private void actualizarTablero() {
+//        vaciarTablero(cubos);
+        logica.actualizarTamanio();
+        cubos=constructUi();
+    } 
+        
+        
+    private static JButton apuntarCubos(JButton[][] cubos) {
+        int[] apuntarCubo = logica.getApuntarCubo();
+        return cubos[apuntarCubo[0]][apuntarCubo[1]];
+    }  
+    private static void printApuntarCubos(JButton[][] cubos) {
+        System.out.println(apuntarCubos(cubos).getText());
+    }
     
-    private static JLabel[][] constructUi()
-    {   
-        int dimensionActual = logica.getDimension();
+    
+     private JButton[][] constructUi()
+    {   panelJuego= new JPanel();
+        
+        int dimensionActual = logicaJuego.getDimension();
 
-        JLabel[][] cubes = new JLabel[dimensionActual][dimensionActual];
-
+        JButton[][] cubos = new JButton[dimensionActual][dimensionActual];
+        
+        // Create a new GridLayout to place cubes in.
         panelJuego.setLayout(new GridLayout(dimensionActual,dimensionActual));
         
-        logica.assignNewCubeColors();
+        logica.nuevosColores();
         
-        populateGameBoard(cubes);
+        llenarTablero(cubos);
     
-        logica.shuffleTargetCubeCoordinates();
+        // Choose a new target cube.
+        logica.mezclarPosicionCubo();
         
-        getTargetCube(cubes).setBackground(manager.getVariantColor());
+        // Subtly change the color of target cube.
+        apuntarCubos(cubos).setBackground(logica.getVariantColor());
 
-        SwingUtilities.updateComponentTreeUI(frame);
+        // Force refresh UI, to ensure butts are re-rendered correctly.
+        SwingUtilities.updateComponentTreeUI(panelJuego);
 
-        printTargetCubeCoordinates(cubes);
+        // For debugging purposes, and a way to cheat ;)
+        printApuntarCubos(cubos);
 
-        return cubes;
+        return cubos;
     }
-    private static void updateBoard() {
-        clearBoard(cubes);
+       
+    @Override
+    public void mouseClicked(MouseEvent e)
+    {
+        JButton apuntarCubo = apuntarCubos(cubos); 
+        if(e.getSource() == apuntarCubo)
+        {
+            actualizarTablero();
+        }
     }
 
-            private static void llenarTablero(JLabel[][] cubes) {
-                int dimensionActual = logica.getDimension();
-                for(int i = 0; i < dimensionActual; i++) {
-                    for(int j = 0;j < dimensionActual; j++) {
-                        cubes[i][j] = new JLabel(i + "," + j);
-                        cubes[i][j].addMouseListener(app);
-                        cubes[i][j].setBackground(manager.getNormalColor());
-                        panelJuego.add(cubes[i][j]);
-                    }
-                }
-            }
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }        
 }
+
+
 
