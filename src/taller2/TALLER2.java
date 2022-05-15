@@ -12,7 +12,8 @@ public class TALLER2 extends JFrame implements MouseListener{
     private  JPanel panelJuego;
     private  JPanel panelStandby;
     private TALLER2 app;
-    private int Nivel=10;
+    private int Nivel;
+    private int punt;
     @Override
     public void paint(Graphics g){
         super.paint(g);
@@ -29,8 +30,7 @@ public class TALLER2 extends JFrame implements MouseListener{
     public void metodoPrincipal(){
         app= new TALLER2();
         ventana=new JFrame();        
-        cubos = constructUi();
-        ventana.setTitle(" KUKU KUBE ");        
+        ventana.setTitle(" KUKU KUBE ");
 
         panelContenidos=ventana.getContentPane();
         panelContenidos.setBackground(Color.BLACK);
@@ -94,6 +94,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelSuperior.add(barraMenu, BorderLayout.NORTH);
         
         JPanel panelinformacion = new JPanel();
+        panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
         panelinformacion.setBackground(Color.BLACK);
         panelinformacion.setLayout(new GridLayout(2,2) );
         
@@ -141,10 +142,10 @@ public class TALLER2 extends JFrame implements MouseListener{
         JPanel panelVisualizacion = new JPanel();
         panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);        
         
-        int dimensionActual=logicaJuego.getDimension();
+        int dimensionActual = logicaJuego.getDimension();
         panelJuego = new JPanel((new GridLayout(dimensionActual,dimensionActual)));
         panelJuego.setSize(panelVisualizacion.getWidth(), panelVisualizacion.getHeight());
-        cubos= constructUi();
+        cubos = constructUi();
         panelVisualizacion.add(panelJuego);
         panelJuego.setVisible(false);
        
@@ -156,26 +157,42 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelStandby.setVisible(true);
         
         JSplitPane separador1 = new JSplitPane();
+        separador1.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        separador1.setTopComponent (barraMenu);
+        separador1.setBottomComponent (panelinformacion);
+        separador1.setDividerSize (2);
         JSplitPane separador2 = new JSplitPane();
+        separador2.setOrientation (JSplitPane.VERTICAL_SPLIT);
+        separador2.setTopComponent (panelinformacion);
+        separador2.setBottomComponent (panelVisualizacion);
+        separador2.setDividerLocation (70);
+        separador2.setDividerSize (2);
         JSplitPane separador3 = new JSplitPane();
+        separador3.setOrientation (JSplitPane.VERTICAL_SPLIT);
+        separador3.setTopComponent (panelVisualizacion);
+        separador3.setBottomComponent (panelBotones);
+        separador3.setDividerSize (2);
         
+        panelSuperior.add(separador1);
+        panelContenidos.add(separador2);
+        panelContenidos.add(separador3);
         
-        ventana.setSize(1000, 800);
+        ventana.setSize(1200, 1000);
         ventana.setLocationRelativeTo(null);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         ventana.setVisible(true);
          
 
     }
-//     private void vaciarTablero(JButton[][] cubos) {
-//        int dimensionActual = logicaJuego.getDimension();
-//            for(int i = 0; i < dimensionActual; i++) {
-//                for(int j = 0; j < dimensionActual; j++) {   
-//                    this.remove(cubos[i][j]);
-//                    cubos[i][j] = null;                              
-//                }
-//            }   
-//    }
+     private void vaciarTablero(JButton[][] cubos) {
+        int dimensionActual = logicaJuego.getDimension();
+            for(int i = 0; i < dimensionActual; i++) {
+               for(int j = 0; j < dimensionActual; j++) {   
+                    panelContenidos.remove(cubos[i][j]);
+                    cubos[i][j] = null;                              
+                }
+            }   
+    }
     private void llenarTablero(JButton[][] cubos) {
         int dimensionActual = logicaJuego.getDimension();
         for(int i = 0; i < dimensionActual; i++) {
@@ -183,12 +200,13 @@ public class TALLER2 extends JFrame implements MouseListener{
                 cubos[i][j] = new JButton(i + "," + j);
                 cubos[i][j].addMouseListener(app);
                 cubos[i][j].setBackground(logica.getNormalColor());
+                cubos[i][j].setSize(100,100);
                 panelJuego.add(cubos[i][j]);
             }
         }
     }
         private void actualizarTablero() {
-//        vaciarTablero(cubos);
+        vaciarTablero(cubos);
         logica.actualizarTamanio();
         cubos=constructUi();
     } 
@@ -239,6 +257,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         if(e.getSource() == apuntarCubo)
         {
             actualizarTablero();
+            logica.actualizarPuntuacion(punt);
         }
     }
 
@@ -262,6 +281,4 @@ public class TALLER2 extends JFrame implements MouseListener{
 
     }        
 }
-
-
 
