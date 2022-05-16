@@ -9,10 +9,12 @@ public class TALLER2 extends JFrame implements MouseListener{
     private static JFrame ventana;
     private static logicaJuego logica;
     private static JButton[][] cubos;
-    private  JPanel panelJuego;
+    private static JPanel panelJuego;
     private  JPanel panelStandby;
-    private TALLER2 app;
+    private static TALLER2 app;
     private int Nivel;
+    private int Dificultad;
+    int smooth;
     private int punt;
     @Override
     public void paint(Graphics g){
@@ -22,7 +24,7 @@ public class TALLER2 extends JFrame implements MouseListener{
     
     
     public static void main(String[] args) {
-       logica = new logicaJuego();
+       logica = new logicaJuego();       
        new TALLER2().metodoPrincipal();
        
     }
@@ -34,6 +36,7 @@ public class TALLER2 extends JFrame implements MouseListener{
 
         panelContenidos=ventana.getContentPane();
         panelContenidos.setBackground(Color.BLACK);
+        
 
         
         inicializacion();        
@@ -46,7 +49,7 @@ public class TALLER2 extends JFrame implements MouseListener{
                 public void actionPerformed(ActionEvent evento)  { 
                         switch (evento.getActionCommand()) {
                             
-                            case "NUEVA PARTIDA":panelStandby.setVisible(false);
+                            case "NUEVA PARTIDA":panelStandby.setVisible(false);                                                 
                                                  panelJuego.setVisible(true);       
                                                  break;
                             case "SALIR"        ://Salir de la aplicación
@@ -94,8 +97,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelSuperior.add(barraMenu, BorderLayout.NORTH);
         
         JPanel panelinformacion = new JPanel();
-        panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
-        panelinformacion.setBackground(Color.BLACK);
+        //panelinformacion.setBackground(Color.BLACK);
         panelinformacion.setLayout(new GridLayout(2,2) );
         
         JPanel panelinformativo1 =new JPanel();
@@ -137,12 +139,11 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelinformacion.add(panelinformativo4);
 
         panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
-        
-        
+                
         JPanel panelVisualizacion = new JPanel();
         panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);        
         
-        int dimensionActual = logicaJuego.getDimension();
+        int dimensionActual = logica.getDimension();
         panelJuego = new JPanel((new GridLayout(dimensionActual,dimensionActual)));
         panelJuego.setSize(panelVisualizacion.getWidth(), panelVisualizacion.getHeight());
         cubos = constructUi();
@@ -156,6 +157,43 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelVisualizacion.add(panelStandby);
         panelStandby.setVisible(true);
         
+
+        String[] niveles = {
+            "1","2","3","4","5","6","7","8","9","10"};
+        String[] dificultad ={"1","2","3","4","5"};
+        String resp = (String) JOptionPane.showInputDialog(null, "SIntroduzca partidas a realizar, por defecto estará a 1",
+                      "Partidas", JOptionPane.DEFAULT_OPTION, null, niveles, niveles[0]);
+        String resp1 = (String) JOptionPane.showInputDialog(null, "SIntroduzca nivel de dificultad, por defecto estará a 1",
+                      "Dificultad", JOptionPane.DEFAULT_OPTION, null, dificultad, dificultad[0]);   
+        switch(resp){
+            case "1":  Nivel=1;      break;
+            case "2":  Nivel=2;      break;
+            case "3":  Nivel=3;      break;
+            case "4":  Nivel=4;      break;
+            case "5":  Nivel=5;      break;
+            case "6":  Nivel=6;      break;
+            case "7":  Nivel=7;      break;
+            case "8":  Nivel=8;      break;
+            case "9":  Nivel=9;      break;
+            case "10": Nivel=10;     break;
+        }
+         switch(resp1){
+            case "1":  Dificultad=1;      break;
+            case "2":  Dificultad=2;      break;
+            case "3":  Dificultad=3;      break;
+            case "4":  Dificultad=4;      break;
+            case "5":  Dificultad=5;      break;
+        }
+         switch(Dificultad){
+            case 1:  smooth=logica.getSmooth();        break;
+            case 2:  smooth=logica.getSmooth()-4;      break;
+            case 3:  smooth=logica.getSmooth()-7;      break;
+            case 4:  smooth=logica.getSmooth()-10;     break;
+            case 5:  smooth=logica.getSmooth()-15;     break;
+        }
+         
+        
+
         JSplitPane separador1 = new JSplitPane();
         separador1.setOrientation(JSplitPane.VERTICAL_SPLIT);
         separador1.setTopComponent (barraMenu);
@@ -177,38 +215,41 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelContenidos.add(separador2);
         panelContenidos.add(separador3);
         
-        ventana.setSize(1200, 1000);
+        ventana.setSize(1100, 950);
         ventana.setLocationRelativeTo(null);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         ventana.setVisible(true);
          
 
-    }
+    }//metodos para crear el juego
      private void vaciarTablero(JButton[][] cubos) {
-        int dimensionActual = logicaJuego.getDimension();
+        int dimensionActual = logica.getDimension();
             for(int i = 0; i < dimensionActual; i++) {
                for(int j = 0; j < dimensionActual; j++) {   
-                    panelContenidos.remove(cubos[i][j]);
+                    panelJuego.remove(cubos[i][j]);
                     cubos[i][j] = null;                              
                 }
             }   
     }
-    private void llenarTablero(JButton[][] cubos) {
-        int dimensionActual = logicaJuego.getDimension();
+    private static void llenarTablero(JButton[][] cubos) {
+        int dimensionActual = logica.getDimension();
         for(int i = 0; i < dimensionActual; i++) {
             for(int j = 0;j < dimensionActual; j++) {
                 cubos[i][j] = new JButton(i + "," + j);
                 cubos[i][j].addMouseListener(app);
-                cubos[i][j].setBackground(logica.getNormalColor());
-                cubos[i][j].setSize(100,100);
+                cubos[i][j].setBackground(logica.getNormalColor());                
                 panelJuego.add(cubos[i][j]);
             }
         }
     }
         private void actualizarTablero() {
-        vaciarTablero(cubos);
-        logica.actualizarTamanio();
-        cubos=constructUi();
+            if(isGameOver()==false){
+                JOptionPane.showMessageDialog(null, "se Acabó, has obtenido  "+punt+" puntos","Game Over!", JOptionPane.DEFAULT_OPTION, null);
+                System.exit(0);
+            }else
+            vaciarTablero(cubos);
+            logica.actualizarTamanio();
+            cubos=constructUi();        
     } 
         
         
@@ -221,10 +262,9 @@ public class TALLER2 extends JFrame implements MouseListener{
     }
     
     
-     private JButton[][] constructUi()
-    {   panelJuego= new JPanel();
-        
-        int dimensionActual = logicaJuego.getDimension();
+     private static JButton[][] constructUi()
+    {           
+        int dimensionActual = logica.getDimension();
 
         JButton[][] cubos = new JButton[dimensionActual][dimensionActual];
         
@@ -249,6 +289,10 @@ public class TALLER2 extends JFrame implements MouseListener{
 
         return cubos;
     }
+     public boolean isGameOver() {
+        int dimensionActual = logica.getDimension();
+        return dimensionActual > Nivel;
+    }
        
     @Override
     public void mouseClicked(MouseEvent e)
@@ -257,7 +301,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         if(e.getSource() == apuntarCubo)
         {
             actualizarTablero();
-            logica.actualizarPuntuacion(punt);
+            logica.actualizarPuntuacion(punt,Dificultad);
         }
     }
 
