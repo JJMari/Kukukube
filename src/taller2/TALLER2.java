@@ -1,6 +1,6 @@
 package taller2;
 
-import java.awt.*;
+mport java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -10,12 +10,16 @@ public class TALLER2 extends JFrame implements MouseListener{
     private static logicaJuego logica;
     private static JButton[][] cubos;
     private static JPanel panelJuego;
-    private  JPanel panelStandby;
+    private static JPanel panelStandby;
     private static TALLER2 app;
-    private int Nivel;
-    private int Dificultad;
-    int smooth;
-    private int punt;
+    private static int Nivel;
+    private static int Dificultad;
+    private JLabel valNivelActual;
+    private JLabel valNivelesRestantes;
+    private JLabel valPuntuacion;
+    private JLabel valNivelesPartida;        
+    private int punt=0;
+    private static boolean partidaEmpezada=false;
     @Override
     public void paint(Graphics g){
         super.paint(g);
@@ -37,8 +41,6 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelContenidos=ventana.getContentPane();
         panelContenidos.setBackground(Color.BLACK);
         
-
-        
         inicializacion();        
     }
     
@@ -49,9 +51,61 @@ public class TALLER2 extends JFrame implements MouseListener{
                 public void actionPerformed(ActionEvent evento)  { 
                         switch (evento.getActionCommand()) {
                             
-                            case "NUEVA PARTIDA":panelStandby.setVisible(false);                                                 
-                                                 panelJuego.setVisible(true);       
+                            case "NUEVA PARTIDA": //Iniciar Juego
+                                                if(partidaEmpezada==false) {
+                                                    int resto=Nivel-1;
+                                                    int dimensionActual=logica.getDimension();
+                                                    int actual=dimensionActual-1;
+                                                    partidaEmpezada=true;
+                                                    String[] niveles = {
+                                                        "1","2","3","4","5","6","7","8","9","10"};
+                                                    String[] dificultad ={"1","2","3","4","5"};
+                                                    String resp = (String) JOptionPane.showInputDialog(null, "SIntroduzca partidas a realizar, por defecto estará a 1",
+                                                                  "Partidas", JOptionPane.DEFAULT_OPTION, null, niveles, niveles[0]);
+                                                    String resp1 = (String) JOptionPane.showInputDialog(null, "SIntroduzca nivel de dificultad, por defecto estará a 1",
+                                                                  "Dificultad", JOptionPane.DEFAULT_OPTION, null, dificultad, dificultad[0]);   
+                                                    switch(resp){
+                                                        case "1":  Nivel=1;      break;
+                                                        case "2":  Nivel=2;      break;
+                                                        case "3":  Nivel=3;      break;
+                                                        case "4":  Nivel=4;      break;
+                                                        case "5":  Nivel=5;      break;
+                                                        case "6":  Nivel=6;      break;
+                                                        case "7":  Nivel=7;      break;
+                                                        case "8":  Nivel=8;      break;
+                                                        case "9":  Nivel=9;      break;
+                                                        case "10": Nivel=10;     break;
+                                                    }
+                                                     switch(resp1){
+                                                        case "1":  Dificultad=1;      break;
+                                                        case "2":  Dificultad=2;      break;
+                                                        case "3":  Dificultad=3;      break;
+                                                        case "4":  Dificultad=4;      break;
+                                                        case "5":  Dificultad=5;      break;
+                                                    }  if (punt < 10) {
+                                                        valPuntuacion.setText("00" + punt);
+                                                        } else {
+                                                        valPuntuacion.setText("0" + punt);
+                                                        }            
+                                                         if (resto < 10) {
+                                                        valNivelesRestantes.setText("00" + resto);
+                                                        } else {
+                                                        valNivelesRestantes.setText("0" + resto);
+                                                        }            
+                                                        if ( actual< 10) {
+                                                        valNivelActual.setText("00" + actual);
+                                                        } else {
+                                                        valNivelActual.setText("0" + actual);
+                                                        } if (Nivel < 10) {
+                                                        valNivelesPartida.setText("00" + Nivel);
+                                                        } else {
+                                                        valNivelesPartida.setText("0" + Nivel);
+                                                        }
+                                                     panelStandby.setVisible(false);                                                 
+                                                     panelJuego.setVisible(true); 
+                                                }else JOptionPane.showMessageDialog(null, "¡¡¡ YA ESTÁS JUGANDO !!!", "", JOptionPane.INFORMATION_MESSAGE);
                                                  break;
+                                                 
                             case "SALIR"        ://Salir de la aplicación
                                                  System.exit(0);
                         }      
@@ -60,7 +114,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         
         JPanel panelBotones = new JPanel();
         panelBotones.setBackground(Color.BLACK);
-        panelBotones.setLayout(new FlowLayout());
+        panelBotones.setLayout(new GridLayout(1,2));
         
         JButton nuevaPartida = new JButton("NUEVA PARTIDA");
         nuevaPartida.setFont(new Font("arial", 0, 10));       
@@ -80,7 +134,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         
         
         JPanel panelSuperior = new JPanel();
-        panelSuperior.setLayout(new GridLayout(2,1));
+        panelSuperior.setLayout(new GridLayout(1,1));
         panelContenidos.add(panelSuperior, BorderLayout.NORTH);
         
         JMenuBar barraMenu = new JMenuBar();
@@ -94,16 +148,17 @@ public class TALLER2 extends JFrame implements MouseListener{
         salirMenu.addActionListener(manipuladorEventos);
         menu.add(salirMenu);
         barraMenu.add(menu);
-        panelSuperior.add(barraMenu, BorderLayout.NORTH);
+        panelSuperior.add(barraMenu);
         
         JPanel panelinformacion = new JPanel();
         //panelinformacion.setBackground(Color.BLACK);
-        panelinformacion.setLayout(new GridLayout(2,2) );
+        panelinformacion.setLayout(new GridLayout(2,2,80,0) );
+        panelinformacion.setBackground(Color.black);
         
         JPanel panelinformativo1 =new JPanel();
         panelinformativo1.setLayout(new FlowLayout());
         JLabel nivelesPartida = new JLabel("NIVELES PARTIDA");        
-        JLabel valNivelesPartida = new JLabel("000");
+        valNivelesPartida = new JLabel("000");
         valNivelesPartida.setForeground(Color.RED);
         panelinformativo1.add(nivelesPartida);
         panelinformativo1.add(valNivelesPartida);
@@ -112,7 +167,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         JPanel panelinformativo2 =new JPanel();
         panelinformativo2.setLayout(new FlowLayout());
         JLabel nivelesRestantes = new JLabel("NIVELES RESTANTES");
-        JLabel valNivelesRestantes = new JLabel("000");
+        valNivelesRestantes = new JLabel("000");
         valNivelesRestantes.setForeground(Color.RED);
         panelinformativo2.add(nivelesRestantes);
         panelinformativo2.add(valNivelesRestantes);
@@ -120,7 +175,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         JPanel panelinformativo3 =new JPanel();
         panelinformativo3.setLayout(new FlowLayout());
         JLabel nivelActual = new JLabel("NIVEL ACTUAL");
-        JLabel valNivelActual = new JLabel("000") ;
+        valNivelActual = new JLabel("000") ;
         valNivelActual.setForeground(Color.RED);
         panelinformativo3.add(nivelActual);
         panelinformativo3.add(valNivelActual);
@@ -128,7 +183,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         JPanel panelinformativo4 =new JPanel();
         panelinformativo4.setLayout(new FlowLayout());
         JLabel puntuacion = new JLabel("PUNTUACIÓN");
-        JLabel valPuntuacion = new JLabel("000");
+        valPuntuacion = new JLabel("000");
         valPuntuacion.setForeground(Color.RED);
         panelinformativo4.add(puntuacion);
         panelinformativo4.add(valPuntuacion);
@@ -137,15 +192,12 @@ public class TALLER2 extends JFrame implements MouseListener{
         panelinformacion.add(panelinformativo2);
         panelinformacion.add(panelinformativo3);
         panelinformacion.add(panelinformativo4);
-
-        panelSuperior.add(panelinformacion, BorderLayout.SOUTH);
                 
         JPanel panelVisualizacion = new JPanel();
         panelContenidos.add(panelVisualizacion, BorderLayout.CENTER);        
         
         int dimensionActual = logica.getDimension();
         panelJuego = new JPanel((new GridLayout(dimensionActual,dimensionActual)));
-        panelJuego.setSize(panelVisualizacion.getWidth(), panelVisualizacion.getHeight());
         cubos = constructUi();
         panelVisualizacion.add(panelJuego);
         panelJuego.setVisible(false);
@@ -155,44 +207,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         EtiquetaImagen.setIcon(new ImageIcon("uib.gif"));
         panelStandby.add(EtiquetaImagen);
         panelVisualizacion.add(panelStandby);
-        panelStandby.setVisible(true);
-        
-
-        String[] niveles = {
-            "1","2","3","4","5","6","7","8","9","10"};
-        String[] dificultad ={"1","2","3","4","5"};
-        String resp = (String) JOptionPane.showInputDialog(null, "SIntroduzca partidas a realizar, por defecto estará a 1",
-                      "Partidas", JOptionPane.DEFAULT_OPTION, null, niveles, niveles[0]);
-        String resp1 = (String) JOptionPane.showInputDialog(null, "SIntroduzca nivel de dificultad, por defecto estará a 1",
-                      "Dificultad", JOptionPane.DEFAULT_OPTION, null, dificultad, dificultad[0]);   
-        switch(resp){
-            case "1":  Nivel=1;      break;
-            case "2":  Nivel=2;      break;
-            case "3":  Nivel=3;      break;
-            case "4":  Nivel=4;      break;
-            case "5":  Nivel=5;      break;
-            case "6":  Nivel=6;      break;
-            case "7":  Nivel=7;      break;
-            case "8":  Nivel=8;      break;
-            case "9":  Nivel=9;      break;
-            case "10": Nivel=10;     break;
-        }
-         switch(resp1){
-            case "1":  Dificultad=1;      break;
-            case "2":  Dificultad=2;      break;
-            case "3":  Dificultad=3;      break;
-            case "4":  Dificultad=4;      break;
-            case "5":  Dificultad=5;      break;
-        }
-         switch(Dificultad){
-            case 1:  smooth=logica.getSmooth();        break;
-            case 2:  smooth=logica.getSmooth()-4;      break;
-            case 3:  smooth=logica.getSmooth()-7;      break;
-            case 4:  smooth=logica.getSmooth()-10;     break;
-            case 5:  smooth=logica.getSmooth()-15;     break;
-        }
-         
-        
+        panelStandby.setVisible(true);        
 
         JSplitPane separador1 = new JSplitPane();
         separador1.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -211,17 +226,66 @@ public class TALLER2 extends JFrame implements MouseListener{
         separador3.setBottomComponent (panelBotones);
         separador3.setDividerSize (2);
         
-        panelSuperior.add(separador1);
-        panelContenidos.add(separador2);
-        panelContenidos.add(separador3);
+        panelSuperior.add(separador1, BorderLayout.NORTH);
+        panelContenidos.add(separador2, BorderLayout.CENTER);
+        panelContenidos.add(separador3, BorderLayout.SOUTH);
         
-        ventana.setSize(1100, 950);
+        panelVisualizacion.setBackground(Color.BLACK);
+        panelStandby.setBackground(Color.BLACK);
+        
+        ventana.setSize(900,950);
         ventana.setLocationRelativeTo(null);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
         ventana.setVisible(true);
+        ventana.setResizable(false);
          
 
-    }//metodos para crear el juego
+    }public void setValNivelesPartida(int n) {
+        if (n < 10) {
+            valNivelesPartida.setText("00" + n);
+        } else {
+            valNivelesPartida.setText("0" + n);
+        }
+
+    }
+
+    public void setValNivelActual(int n) {
+        if (n < 10) {
+            valNivelActual.setText("00" + n);
+        } else {
+            valNivelActual.setText("0" + n);
+        }
+    }
+
+    public void setValPuntuacion(int sumar) {
+        int val = Integer.parseInt(valPuntuacion.getText());
+        val += sumar;
+        if (val < 10) {
+            valPuntuacion.setText("00" + val);
+        } else {
+            valPuntuacion.setText("0" + val);
+        }
+    }
+
+    public void resetValPuntuacion() {
+        valPuntuacion.setText("000");
+    }
+
+    public JLabel getValNivelesRestantes() {
+        return valNivelesRestantes;
+    }
+
+    public void setValNivelesRestantes(int n) {
+        if (n < 10) {
+            valNivelesRestantes.setText("00" + n);
+        } else {
+            valNivelesRestantes.setText("0" + n);
+        }
+    }
+    
+    
+    
+//metodos para crear los cubos para el juego
      private void vaciarTablero(JButton[][] cubos) {
         int dimensionActual = logica.getDimension();
             for(int i = 0; i < dimensionActual; i++) {
@@ -243,13 +307,37 @@ public class TALLER2 extends JFrame implements MouseListener{
         }
     }
         private void actualizarTablero() {
-            if(isGameOver()==false){
+            int dimensionActual=logica.getDimension();
+            int actual=dimensionActual-1;
+            int resto=Nivel-actual;
+            if(isGameOver()==true){
                 JOptionPane.showMessageDialog(null, "se Acabó, has obtenido  "+punt+" puntos","Game Over!", JOptionPane.DEFAULT_OPTION, null);
                 System.exit(0);
-            }else
+            }else{
+            punt=punt+5*Dificultad;     
             vaciarTablero(cubos);
             logica.actualizarTamanio();
-            cubos=constructUi();        
+            cubos=constructUi();
+            if (punt < 10) {
+            valPuntuacion.setText("00" + punt);
+            } else {
+            valPuntuacion.setText("0" + punt);
+            }            
+             if (resto < 10) {
+            valNivelesRestantes.setText("00" + resto);
+            } else {
+            valNivelesRestantes.setText("0" + resto);
+            }            
+            if ( actual< 10) {
+            valNivelActual.setText("00" + actual);
+            } else {
+            valNivelActual.setText("0" + actual);
+            } if (Nivel < 10) {
+            valNivelesPartida.setText("00" + Nivel);
+            } else {
+            valNivelesPartida.setText("0" + Nivel);
+            }
+        }
     } 
         
         
@@ -263,15 +351,15 @@ public class TALLER2 extends JFrame implements MouseListener{
     
     
      private static JButton[][] constructUi()
-    {           
+    {                   
         int dimensionActual = logica.getDimension();
 
         JButton[][] cubos = new JButton[dimensionActual][dimensionActual];
         
         // Create a new GridLayout to place cubes in.
-        panelJuego.setLayout(new GridLayout(dimensionActual,dimensionActual));
+        panelJuego.setLayout(new GridLayout(dimensionActual,dimensionActual));        
         
-        logica.nuevosColores();
+        logica.nuevosColores(Dificultad);
         
         llenarTablero(cubos);
     
@@ -300,8 +388,7 @@ public class TALLER2 extends JFrame implements MouseListener{
         JButton apuntarCubo = apuntarCubos(cubos); 
         if(e.getSource() == apuntarCubo)
         {
-            actualizarTablero();
-            logica.actualizarPuntuacion(punt,Dificultad);
+            actualizarTablero();                     
         }
     }
 
